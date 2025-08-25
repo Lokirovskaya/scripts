@@ -1,0 +1,9 @@
+#!/bin/python3.11
+
+import sys
+import os
+
+if len(sys.argv) == 1:
+    os.system("tmux new-session")
+else:
+    os.system("tmux new-session -s " + sys.argv[1])

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+top -e M -E G -u `whoami`

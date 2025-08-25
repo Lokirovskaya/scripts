@@ -1,0 +1,13 @@
+#!/bin/python3.11
+
+import sys
+import os
+
+if len(sys.argv) == 1:
+    print("Usage: tkill <session_name> [session_name...]")
+    sys.exit(1)
+
+for name in sys.argv[1:]:
+    r = os.system("tmux kill-session -t " + name)
+    if r == 0:
+        print("killed: " + name)

@@ -1,0 +1,54 @@
+#!/bin/python3.11
+
+import sys
+import subprocess
+from datetime import datetime
+
+r = subprocess.run(
+    "tmux list-panes -a -F '#{session_name} #{pane_pid} #{session_created}'",
+    shell=True,
+    capture_output=True,
+)
+
+if r.returncode != 0:
+    print("No running sessions")
+    sys.exit(0)
+
+lines = r.stdout.decode("utf-8").strip().splitlines()
+infos = [line.strip().split() for line in lines]
+
+template = "{:<10}{:<10}{:<10}{}"
+
+print(template.format("NAME", "PID", "CREATED", "RUNNING"))
+
+
+def time_ago(timestamp: int) -> str:
+    now = datetime.now()
+    past = datetime.fromtimestamp(timestamp)
+    diff = now - past
+    seconds = diff.total_seconds()
+
+    s = int(seconds) % 60
+    m = int(seconds) // 60
+    h = int(seconds) // 3600
+    d = int(seconds) // 86400
+
+    if d > 0:
+        return f"{d}d {h}h"
+    elif h > 0:
+        return f"{h}h {m}m"
+    elif m > 0:
+        return f"{m}m {s}s"
+    else:
+        return f"{s}s"
+
+
+for name, pid, created_timestamp in infos:
+    created = time_ago(int(created_timestamp))
+    r = subprocess.run(f"ps --ppid {pid} -o cmd", shell=True, capture_output=True)
+    if r.returncode != 0:
+        child = "-"
+    else:
+        child = r.stdout.decode("utf-8").strip().splitlines()[1]
+
+    print(template.format(name, pid, created, child))
