@@ -29,8 +29,8 @@ def time_ago(timestamp: int) -> str:
     seconds = diff.total_seconds()
 
     s = int(seconds) % 60
-    m = int(seconds) // 60
-    h = int(seconds) // 3600
+    m = int(seconds) // 60 % 60
+    h = int(seconds) // 3600 % 24
     d = int(seconds) // 86400
 
     if d > 0:
@@ -47,7 +47,7 @@ for name, pid, created_timestamp in infos:
     created = time_ago(int(created_timestamp))
     r = subprocess.run(f"ps --ppid {pid} -o cmd=", shell=True, capture_output=True)
     if r.returncode != 0:
-        child = ""
+        child = "-"
     else:
         child = r.stdout.decode("utf-8").strip().splitlines()[0]
 
