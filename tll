@@ -17,7 +17,7 @@ if r.returncode != 0:
 lines = r.stdout.decode("utf-8").strip().splitlines()
 infos = [line.strip().split() for line in lines]
 
-template = "{:<10}{:<10}{:<10}{}"
+template = "{:<9} {:<9} {:<9} {}"
 
 print(template.format("NAME", "PID", "CREATED", "RUNNING"))
 
@@ -47,7 +47,7 @@ for name, pid, created_timestamp in infos:
     created = time_ago(int(created_timestamp))
     r = subprocess.run(f"ps --ppid {pid} -o cmd=", shell=True, capture_output=True)
     if r.returncode != 0:
-        child = "-"
+        child = ""
     else:
         child = r.stdout.decode("utf-8").strip().splitlines()[0]
 
